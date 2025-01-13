@@ -3,5 +3,6 @@ pydantic==1.10.2
 SQLAlchemy~=2.0.37
 starlette==0.35.0
 pytest~=8.3.4
+pytest-cov==4.1.0
 anyio==3.7.0
 httpx==0.24.1

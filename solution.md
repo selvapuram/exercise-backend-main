@@ -1,7 +1,6 @@
 # Solution for Order Management System
 
-## GITHUB URL:
-[https://github.com/selvapuram/exercise-backend-main/]
+### GITHUB URL:[https://github.com/selvapuram/exercise-backend-main/]
 
 ## Problem Overview
 

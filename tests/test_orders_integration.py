@@ -1,15 +1,15 @@
-import pytest
-from uuid import uuid4
 from app.database import OrderEntity
+from random import randint
 
 
 def test_create_order(client, db):
+    instrument = "AAPL12345678" + str(randint(0, 1000))
     response = client.post(
         "/orders",
         json={
             "type": "limit",
             "side": "buy",
-            "instrument": "AAPL12345678",
+            "instrument": instrument,
             "limit_price": 150.0,
             "quantity": 10,
         },
@@ -28,7 +28,7 @@ def test_create_order(client, db):
         assert db_order is not None
         assert db_order.id == order_id
         assert db_order.type == "limit"
-        assert db_order.instrument == "AAPL12345678"
+        assert db_order.instrument == instrument
         assert db_order.quantity == 10
 
     elif response.status_code == 500:
@@ -37,16 +37,16 @@ def test_create_order(client, db):
         assert "id" not in response_data
 
         response_data = response.json()
-        assert response_data["message"] == "Internal server error while placing the order"
+        assert response_data.get("detail", {}).get("message") == "Internal server error while placing the order"
 
         # Fetch the order from the database using the (non-existing) ID
         order_id = response_data.get("id")
-        if order_id:  # This is just a precaution, but it shouldn't be necessary.
+        if order_id:
             db_order = db.query(OrderEntity).filter(OrderEntity.id == order_id).first()
             assert db_order is None
         else:
             # Make sure no order exists at all (as we expect a failure at 500)
-            db_order = db.query(OrderEntity).filter(OrderEntity.instrument == "AAPL12345678").first()
+            db_order = db.query(OrderEntity).filter(OrderEntity.instrument == instrument).first()
             assert db_order is None
 
 
